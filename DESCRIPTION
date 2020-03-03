@@ -1,0 +1,12 @@
+Package: STAT302
+Title: project3
+Version: 0.0.0.9000
+Authors@R: person(given = "junzhao",
+           family = "liu",
+           role = c("aut", "cre"),
+           email = "liuj77@uw.edu",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: this package is used to build a package for stat302.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
