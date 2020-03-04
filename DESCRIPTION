@@ -11,4 +11,4 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Suggests: 
-    testthat
+    testthat (>= 2.1.0)
