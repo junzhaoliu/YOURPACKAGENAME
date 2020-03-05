@@ -1,9 +1,9 @@
 ---
-title: "Project 3: PACKAGE_NAME Tutorial"
+title: "Project 3: STAT302 Tutorial"
 author: "junzhao liu"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{PACKAGE_NAME Tutorial}
+  %\VignetteIndexEntry{STAT302 Tutorial}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
