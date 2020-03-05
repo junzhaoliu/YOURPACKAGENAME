@@ -1,0 +1,20 @@
+---
+title: "Project 3: PACKAGE_NAME Tutorial"
+author: "junzhao liu"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{PACKAGE_NAME Tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(STAT302)
+```
