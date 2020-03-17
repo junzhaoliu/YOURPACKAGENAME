@@ -150,6 +150,7 @@ rownames(table) <- c("CV estimate of 2","CV estimate of 5","CV estimate of 10")
 #The change of Variance of cross-validation as number of folds increasing is more u-shaped than linear relation. 
 #The variance decreases at first because we are taking the average of more trials. It increases later because 
 #as k approaches n, the folds become highly correlated.
+CODECOV_TOKEN="2970dc01-876d-45c6-9458-32946d4dc94b
 ```
 
 
