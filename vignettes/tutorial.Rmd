@@ -17,4 +17,139 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(STAT302)
+library(tidyverse)
 ```
+# Introduction  
+  Install \texttt{Project3} using:
+```{r, eval = FALSE}
+devtools::install_github("junzhaoliu/project3")
+```  
+  
+  To begin, we load our example data set as a \texttt{my_gapminder} object.
+```{r, message = FALSE}
+library(STAT302)
+data("my_gapminder")
+```
+
+# My_t_test  
+  
+```{r}
+lifeExp <- my_gapminder$lifeExp
+my_t_test(lifeExp, alternative="two.sided", mu=60)
+#Since p_value = 0.093 is greater than alpha, we cannot reject H_null in favor of H_alternative. 
+#It means that the data does not provide evidence that the mean of lifeExp is not equal to 60.
+
+my_t_test(lifeExp, alternative="less", mu=60)
+#Since p_value = 0.047 is less than alpha, we should reject H_null in favor of H_alternative. 
+#It means that the data provides evidence that the mean of lifeExp is less than 60.
+
+my_t_test(lifeExp, alternative="greater", mu=60)
+#Since p_value = 0.9533 is greater than alpha, we cannot reject H_null in favor of H_alternative. 
+#It means that the data does not provide evidence that the mean of lifeExp is greater 60.
+```
+
+# My_lm
+```{r}
+lifeExp <- my_gapminder$lifeExp
+gdpPercap <- my_gapminder$gdpPercap
+continent <- my_gapminder$continent
+lm <- my_lm(lifeExp ~ gdpPercap + continent, my_gapminder)
+lm
+#The coefficient of gdpPercap is 4.452704e-04, which means average change of 1 unit gdpPercap is associated with 
+#an average change of 4.452704e-04 unit of lifeExp.
+
+#Null Hypothesis: the coefficient of gdpPercap equals to 0.
+#Alternative Hypothesis: the coefficient of gdpPercap 
+#does not equals to 0.
+
+#From my_lm, we know that the accociated p_value is 8.552893e-73 which is less than alpha = 0.05. Thus, we should reject 
+#H_null in favor of H_alternative. The data provides evidence that the coefficient of gdpPercap does not equals to 0.
+model <- model.matrix(lifeExp ~ gdpPercap + continent)
+yhat <- model%*%lm$Estimate
+my_df <- data.frame(actual = lifeExp, fitted = yhat)
+ggplot(my_df, aes(x = fitted, y = actual)) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0, col = "red", lty = 2) + 
+  theme_bw(base_size = 15) +
+  labs(x = "Fitted values", y = "Actual values", title = "Actual vs. Fitted") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Model fitting go through the middle points of scatter plot. The variability of actual data is very large at in the first half 
+#of the graph, data becomes more stable in the second half of the graph, and the linear fitting is more fit in the second 
+#half as well. There are four clusters in scatter plots as there are also four different continents in our data. 
+```
+
+# My_knn_cv
+```{r}
+library(class)
+train <- cbind(gdpPercap, lifeExp)
+cl <- continent
+k_cv <- 5
+cv_Err <- numeric(10)
+train_Err <- numeric(10)
+for (i in 1:10) {
+  l <- my_knn_cv(train, cl, i, k_cv)
+  cv_Err[i] <- l$cv_Err
+  
+  counts <- 0
+  y_true_v <- as.vector(cl)
+  y_test_v <- as.vector(l$class)
+  for (j in 1:length(y_true_v)) {
+    if (y_true_v[j] != y_test_v[j]){
+      counts <- counts + 1
+    }
+  }
+  train_Err[i] <- counts / length(y_true_v)
+}
+cv_Err 
+#Based on the output of cv error, when k_nn equals 10 has the smallest error, so we choose k_nn equals 10
+train_Err
+#According to the out put of training error k_nn equals 1 has the smallest error, so we choose k_nn equals 1
+```
+
+# My_rf_cv
+```{r}
+library(randomForest)
+lifeExp <- my_gapminder$lifeExp
+gdpPercap <- my_gapminder$gdpPercap
+k_c <- c(2,5,10)
+cv_mse_2 <- numeric(30)
+cv_mse_5 <- numeric(30)
+cv_mse_10 <- numeric(30)
+for (i in k_c) {
+  for (j in 1:30) {
+    if (i == 2) {
+      cv_mse_2[j] <- my_rf_cv(i)
+    } else if (i == 5) {
+      cv_mse_5[j] <- my_rf_cv(i)
+    } else {
+      cv_mse_10[j] <- my_rf_cv(i) 
+    }
+  }
+}
+v1 <- c(cv_mse_2, cv_mse_5, cv_mse_10)
+v2 <- c(rep(2,30), rep(5,30), rep(10,30))
+data <- data.frame(cbind(v1, v2))
+ggplot(data, aes(x = as.factor(v2), y = v1)) +
+  geom_boxplot(fill = "lightpink") +
+  theme_bw(base_size = 10) +
+  labs(title = "CV estimated MSE in 3 different k", x = "", y = "") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylim(c(70,85))
+
+m_5 <- mean(cv_mse_5)
+m_2 <- mean(cv_mse_2)
+m_10 <- mean(cv_mse_10)
+sd_10 <- sd(cv_mse_10)
+sd_2 <- sd(cv_mse_2)
+sd_5 <- sd(cv_mse_5)
+table <- data.frame("mean" = c(m_2, m_5, m_10),
+                    "sd" = c(sd_2, sd_5, sd_10))
+rownames(table) <- c("CV estimate of 2","CV estimate of 5","CV estimate of 10")
+
+#The change of Variance of cross-validation as number of folds increasing is more u-shaped than linear relation. 
+#The variance decreases at first because we are taking the average of more trials. It increases later because 
+#as k approaches n, the folds become highly correlated.
+```
+
+
