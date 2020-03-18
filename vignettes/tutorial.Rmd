@@ -22,7 +22,7 @@ library(tidyverse)
 # Introduction  
   Install \texttt{Project3} using:
 ```{r, eval = FALSE}
-devtools::install_github("junzhaoliu/project3")
+devtools::install_github("junzhaoliu/project3",force = TRUE)
 ```  
   
   To begin, we load our example data set as a \texttt{my_gapminder} object.
